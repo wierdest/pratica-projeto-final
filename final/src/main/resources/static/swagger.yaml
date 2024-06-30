@@ -67,11 +67,14 @@ components:
          properties:
            comentario: 
               type: string
+              description: O comentario da pessoa que recomendou
            autor:
               type: string
+              description: O nome do funcionário que recomendou o candidato
            dataDeCriacao:
               type: string
               format: date-time
+              description: A data que a recomendação foi criada
 paths:
   /candidatos:
     get:
