@@ -23,114 +23,47 @@ externalDocs:
 servers:
 - url: http://localhost:8080/
   description: The local development API server
-
-
+  
 components:
-  securitySchemes:
-    APIKeyAuth:
-      type: apiKey
-      in: header
-      name: X-API-KEY
-    BearerAuth:            
-      type: http
-      scheme: bearer
-    
   schemas:
-    UserDTO:
+    CandidatoDTO:
       type: object
       properties:
         id:
           type: long
-          description: a id do usuario no db
+          description: a id do candidato no db
+        nome:
+          type: string
+          description: o nome do candidato
         email:
-          type: string
-          description: o email do usuário
-        createdAt:
+          typle: string
+          description: o email do candidato	  		 
+        softSkills:
             type: string
-            format: date-time
-            description: O registro de criação da usuário.
-        accessedAt:
+            description: soft skills do candidato
+        deepSkills:
             type: string
-            format: date-time
-            description: O registro do último acesso do usuário.
-    
-    UserLoginDTO:
-      type: object
-      properties:
-        email:
-          type: string
-          description: o email do usuário
-        password:
-          type: string
-          description: A senha que o usuário gostaria de cadastrar
-        profileCode:
-          type: integer
-          description: O código (número) do perfil do usuário ADMIN(0), RECRUITER(1), CANDIDATE(2);
-    
-    AuthorizationToken:
-      type: object
-      properties:
-        token:
-          type: string
-          description: O token de autenticação JWT
-        expiresAt:
-          type: string
-          format: date-time
-          description: Data e hora de expiração do token
-        type:
-          type: string
-          description: Tipo de token (por exemplo, Bearer)
-          example: Bearer
-
-    GeneralError:
-      type: object
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
-
-  responses:
-    IllegalInput:
-      description: Illegal input for operation.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GeneralError'
-    NotFound:
-      description: Entity not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GeneralError'
-    
-    Unauthorized:
-      description: Token de acesso é inválido ou expirado!
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GeneralError'
-    
-    
-    GeneralError:
-      description: General error.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GeneralError'
-
-security:
-  - APIKeyAuth: []
-
+            description: deep skills do candidato
+        hardSkills:
+            type: string
+            description: hard skills do candidato
+    CadastroDTO:
+        type: object
+        properties:	
+          nome: 
+           type: string
+           description: nome do candidato
+          email:
+           type: string
+           description: email do candidato
 paths:
   
-  /users:
+  /candidatos:
     
     get:
-      summary: Consulta todos os usuários com paginação
+      summary: Consulta todos os candidatos com paginação
       tags:
-        - Pegar USERS
+        - Pegar CANDIDATOS
       parameters:
         - name: page
           in: query
@@ -148,7 +81,7 @@ paths:
             default: 10
       responses:
         '200':
-          description: Retornou a lista de USERS com sucesso
+          description: Retornou a lista de CANDIDATOS com sucesso
           content:
             application/json:
               schema:
@@ -157,7 +90,7 @@ paths:
                   content:
                     type: array
                     items:
-                      $ref: '#/components/schemas/UserDTO'
+                      $ref: '#/components/schemas/CandidatoDTO'
                   totalElements:
                     type: integer
                     example: 100
@@ -176,141 +109,22 @@ paths:
                   first:
                     type: boolean
                     example: false
-        '400':
-          $ref: '#/components/responses/IllegalInput'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '500':
-          $ref: '#/components/responses/GeneralError'
 
     post:
-      summary: Cadastra um usuário no database.
-      operationId: cadastrarUsuario
+      summary: Cadastra um candidato no database.
+      operationId: cadastrarCandidato
       tags:
-        - Cadastrar USER
+        - Cadastrar CANDIDATO
       description: |
-        Cadastra o USER se o email for único no database,
-        Atribui o perfil do usuário a partir do código de perfil inserido
+        Cadastra o CANDIDATO se o email for único no database,
+        Atribui o perfil do candidato a partir do código de perfil inserido
         Criptografa a senha inserida.
         Registra o momento de criação.
       requestBody:
-        description: UserLoginDTO contendo o email a ser validado, a senha a ser criptografada e o código do perfil do usuário
+        description: CadastroDTO contendo o email a ser validado, a senha a ser criptografada e o código do perfil do candidato
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserLoginDTO'
-      responses:
-        '201':
-          description: User cadastrado com sucesso. Retorna um AuthorizationToken
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AuthorizationToken'
-        '400':
-          $ref: '#/components/responses/GeneralError'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '500':
-          $ref: '#/components/responses/GeneralError'
-
-    delete:
-      summary: Deleta um usuário do database
-      operationId: deletaUsuario
-      tags:
-        - Deletar USER
-      description: Deleta um usuário do database
-      parameters:
-          - name: id
-            in: path
-            description: ID do usuário a ser deletado
-            required: true
-            schema:
-              type: string
-      responses:
-        '204':
-          description: User deletado com sucesso. No content.
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '500':
-          $ref: '#/components/responses/GeneralError'
+              $ref: '#/components/schemas/CadastroDTO'
   
-  
-  /auth/login:
-    post:
-      summary: Autentica um usuário no sistema a partir do email e da senha.
-      operationId: loginUsuario
-      tags:
-        - Autenticar USER
-      description: |
-        Autentica o USER utilizando o email e senha cadastrados no database.
-        Retorna um AuthorizationToken se as credenciais forem válidas.
-      requestBody:
-        description: UserLoginDTO contendo o email e a senha do usuário
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserLoginDTO'
-      responses:
-        '200':
-          description: User autenticado com sucesso. Retorna um AuthorizationToken.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AuthorizationToken'
-        '400':
-          $ref: '#/components/responses/GeneralError'
-        '401':
-          description: Credenciais inválidas. O login falhou.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Invalid email or password."
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '500':
-          $ref: '#/components/responses/GeneralError'
-
-
-  /auth/check:
-    get:
-      security:
-        - APIKeyAuth: []
-        - BearerAuth: []
-      summary: Confere se o JWT do usuário é válido
-      operationId: userAuth
-      tags:
-        - Conferir USER
-      description: |
-        Confere se o JWT inserido no header Authorization é válido
-        Retorna um AuthorizationToken 
-      responses:
-        '200':
-          description: Autenticado com sucesso. Retorna um AuthorizationToken com o expiration date atualizado.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AuthorizationToken'
-        '400':
-          description: Parâmetros de entrada inválidos.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/IllegalInput'
-        '401':
-          description: Não autorizado. JWT inválido ou expirado.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Unauthorized'
-        '500':
-          description: Erro interno do servidor.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GeneralError'
