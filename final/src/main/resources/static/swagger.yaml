@@ -1,16 +1,15 @@
 openapi: 3.1.0
 info:
-  title: API de candidatos alterdata
+  title: API de candidatos Alterdata
   summary: database de candidatos
   description: |
-    Retorna users e informações sobre users no database de TinyTale.
-    Retorna token de autorização para efetuar login em TinyTale
-    Persiste os users cadastrados por TinyTale.
-  termsOfService: https://tinytale.com/terms/
+    Retorna os Candidatos promissores para Alterdata
+    Autoriza os usuários do RH
+  termsOfService: https://candidatos.com/terms/
   contact:
     name: API Support
-    url: https://www.tinytale.com/support
-    email: support@tinytale.com
+    url: https://www.candidato.com/support
+    email: support@candidato.com
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
@@ -56,10 +55,11 @@ components:
           email:
            type: string
            description: email do candidato
+          linkedInLink:
+            type: string
+            description: linkedin do candidato
 paths:
-  
   /candidatos:
-    
     get:
       summary: Consulta todos os candidatos com paginação
       tags:
@@ -109,7 +109,6 @@ paths:
                   first:
                     type: boolean
                     example: false
-
     post:
       summary: Cadastra um candidato no database.
       operationId: cadastrarCandidato
