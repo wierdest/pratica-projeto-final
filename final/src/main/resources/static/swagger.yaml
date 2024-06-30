@@ -35,8 +35,12 @@ components:
           type: string
           description: o nome do candidato
         email:
-          typle: string
-          description: o email do candidato	  		 
+          type: string
+          description: o email do candidato
+        recomedacoes:
+          type: array
+          itens:
+            $ref: '#/components/schemas/ecomendacaoDTO'   		 
         softSkills:
             type: string
             description: soft skills do candidato
@@ -58,6 +62,16 @@ components:
           linkedInLink:
             type: string
             description: linkedin do candidato
+    RecomendacaoDTO:
+         type: object
+         properties:
+           comentario: 
+              type: string
+           autor:
+              type: string
+           dataDeCriacao:
+              type: string
+              format: date-time
 paths:
   /candidatos:
     get:
