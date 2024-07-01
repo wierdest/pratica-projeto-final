@@ -3,8 +3,15 @@ info:
   title: API de candidatos Alterdata
   summary: database de candidatos
   description: |
-    Retorna os Candidatos promissores para Alterdata
-    Autoriza os usuários do RH
+    Retorna informações sobre Candidatos promissores para Alterdata.
+    As informações incluem:
+    - Nome
+    - Foto
+    - Formação (SERRATEC, Tech4Me)
+    - Currículo em PDF
+    - Link para o perfil no LinkedIn
+    - Lista de Anotações contendo comentários sobre o Candidato, o autor, e a data da anotação.
+    - Soft Skills, Hard Skills e Deep Skills
   termsOfService: https://candidatos.com/terms/
   contact:
     name: API Support
@@ -37,10 +44,10 @@ components:
         email:
           type: string
           description: o email do candidato
-        recomedacoes:
+        anotacoes:
           type: array
-          itens:
-            $ref: '#/components/schemas/ecomendacaoDTO'   		 
+          items:
+            $ref: '#/components/schemas/AnotacaoDTO'   		 
         softSkills:
             type: string
             description: soft skills do candidato
@@ -59,10 +66,20 @@ components:
           email:
            type: string
            description: email do candidato
-          linkedInLink:
+          linkedIn:
             type: string
             description: linkedin do candidato
-    RecomendacaoDTO:
+          fotos:
+            type: array
+            items:
+              type: string
+              format: url
+            description: lista de URLs das fotos do candidato
+          anotacoes:
+            type: array
+            items:
+              $ref: '#/components/schemas/AnotacaoDTO'   
+    AnotacaoDTO:
          type: object
          properties:
            comentario: 
@@ -75,6 +92,7 @@ components:
               type: string
               format: date-time
               description: A data que a recomendação foi criada
+
 paths:
   /candidatos:
     get:
@@ -131,13 +149,9 @@ paths:
       operationId: cadastrarCandidato
       tags:
         - Cadastrar CANDIDATO
-      description: |
-        Cadastra o CANDIDATO se o email for único no database,
-        Atribui o perfil do candidato a partir do código de perfil inserido
-        Criptografa a senha inserida.
-        Registra o momento de criação.
+      description: Cadastra um candidato no database, se ele for único.
       requestBody:
-        description: CadastroDTO contendo o email a ser validado, a senha a ser criptografada e o código do perfil do candidato
+        description: CadastroDTO
         required: true
         content:
           application/json:
